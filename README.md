@@ -1,4 +1,4 @@
-﻿# 馃柤锔?Sekai Picture Wallpaper 路 浜屾鍏冨绾稿浘搴?
+# 馃柤锔?Sekai Picture Wallpaper 路 浜屾鍏冨绾稿浘搴?
 > **涓婁紶 路 鍒嗙被 路 绛涢€?路 鏀惰棌 路 鎵归噺鎿嶄綔 路 杩愯惀鐪嬫澘**
 > A complete anime wallpaper gallery system
 
@@ -57,7 +57,7 @@ mvn spring-boot:run
 
 
 <p align="center">
-  <img src="screenshots/demo.gif" alt="Demo" width="720"/>
+  <img src="screenshots/demo.webp" alt="Demo" width="720"/>
 </p>
 ---
 

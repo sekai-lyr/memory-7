@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sekai.picture.mapper.SekaiPictureUserMapper">
+    <resultMap id="BaseResultMap" type="com.sekai.picture.dataobject.SekaiPictureUserDO">
+        <id property="id" column="id"/>
+        <result property="userName" column="user_name"/>
+        <result property="password" column="password"/>
+        <result property="nickName" column="nick_name"/>
+        <result property="avatar" column="avatar_url"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+    <sql id="Base_Column_List">id, user_name, password, nick_name, avatar_url, create_time</sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM sekai_picture_user WHERE id = #{id}
+    </select>
+    <select id="selectByUserName" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM sekai_picture_user WHERE user_name = #{userName}
+    </select>
+    <select id="selectByLoginName" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM sekai_picture_user
+        WHERE user_name = #{loginName} OR nick_name = #{loginName}
+        ORDER BY CASE WHEN user_name = #{loginName} THEN 0 ELSE 1 END, id
+        LIMIT 1
+    </select>
+    <insert id="insert" parameterType="com.sekai.picture.dataobject.SekaiPictureUserDO" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO sekai_picture_user (user_name, password, nick_name, avatar_url)
+        VALUES (#{userName}, #{password}, #{nickName}, #{avatar})
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.sekai.picture.dataobject.SekaiPictureUserDO">
+        UPDATE sekai_picture_user
+        <set>
+            <if test="userName != null">user_name = #{userName},</if>
+            <if test="password != null">password = #{password},</if>
+            <if test="nickName != null">nick_name = #{nickName},</if>
+            <if test="avatar != null">avatar_url = #{avatar},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+</mapper>
+

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sekai Picture - 运营看板</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}" href="/css/app.css">
+</head>
+<body class="commerce-page">
+<header class="topbar gallery-topbar">
+    <div>
+        <p class="eyebrow">OPERATION DASHBOARD</p>
+        <h1>运营看板</h1>
+        <p class="topbar-subtitle">用数据看图库的资产情况。</p>
+    </div>
+    <nav>
+        <span th:text="${loginUser.nickName != null ? loginUser.nickName : loginUser.userName}">sekai</span>
+        <a href="/home">图库</a>
+        <a href="/upload">上传壁纸</a>
+        <a href="/logout">退出</a>
+    </nav>
+</header>
+
+<main class="workspace commerce-workspace">
+    <section class="dashboard-grid">
+        <article class="insight-card primary-insight">
+            <span>壁纸数量</span>
+            <strong th:text="${stats.wallpaperCount}">0</strong>
+            <p>当前图库中所有壁纸的总数。</p>
+        </article>
+        <article class="insight-card">
+            <span>分类数量</span>
+            <strong th:text="${stats.categoryCount}">0</strong>
+            <p>已创建的壁纸分类数。</p>
+        </article>
+        <article class="insight-card">
+            <span>收藏热度</span>
+            <strong th:text="${stats.favoriteCount}">0</strong>
+            <p>用户收藏的壁纸总数。</p>
+        </article>
+        <article class="insight-card">
+            <span>自制作品</span>
+            <strong th:text="${stats.originalCount}">0</strong>
+            <p>标记为自制的壁纸数量。</p>
+        </article>
+    </section>
+
+    <section class="dashboard-split">
+        <article class="panel">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">HOT ASSETS</p>
+                    <h2>最热门的壁纸</h2>
+                </div>
+                <a class="text-link" href="/home?sort=popular">查看全部</a>
+            </div>
+            <div class="rank-list" th:if="${!#lists.isEmpty(hotWallpapers)}">
+                <a th:each="item, stat : ${hotWallpapers}" th:href="@{'/download/' + ${item.id}}">
+                    <span th:text="${stat.count}">1</span>
+                    <img th:src="${item.imageUrl}" alt="热门壁纸" loading="lazy">
+                    <strong th:text="${item.title}">壁纸标题</strong>
+                    <small th:text="${(item.downloadCount != null ? item.downloadCount : 0) + ' 次下载'}">0 次下载</small>
+                </a>
+            </div>
+            <p th:if="${#lists.isEmpty(hotWallpapers)}">暂无热门数据，先去上传或下载几张壁纸。</p>
+        </article>
+
+        <aside class="panel">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">GROWTH TASKS</p>
+                    <h2>增长任务</h2>
+                </div>
+            </div>
+            <div class="task-list">
+                <label><input type="checkbox" checked> 完成壁纸导入</label>
+                <label><input type="checkbox" th:checked="${stats.categoryCount >= 12}"> 分类达到 12 个以上</label>
+                <label><input type="checkbox" th:checked="${stats.favoriteCount >= 20}"> 收藏数超过 20 次</label>
+            </div>
+            <div class="tag-cloud">
+                <span th:each="tone : ${colorTones}" th:text="${tone}">blue</span>
+                <span th:if="${#lists.isEmpty(colorTones)}">暂无色调标签</span>
+            </div>
+        </aside>
+    </section>
+</main>
+</body>
+</html>

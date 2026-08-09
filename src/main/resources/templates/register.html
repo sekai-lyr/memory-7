@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sekai Picture - 注册</title>
+    <link rel="stylesheet" th:href="@{/css/login.css}" href="/css/login.css">
+</head>
+<body>
+<main class="login-page register-page">
+    <section class="brand-area">
+        <p class="eyebrow">CREATE ACCOUNT</p>
+        <h1>给你的壁纸收藏建一个漂亮入口。</h1>
+        <p class="brand-copy">注册后可以上传自制壁纸、建立分类、收藏灵感图，让图库慢慢变成自己的二次元小宇宙。</p>
+    </section>
+    <section class="form-area">
+        <div class="login-card">
+            <h2>创建账号</h2>
+            <p>开始整理你的图片收藏</p>
+            <div class="server-message error" th:if="${error}" th:text="${error}"></div>
+            <form action="/user/register" method="post" id="registerForm">
+                <label for="userName">用户名</label>
+                <input id="userName" name="userName" type="text" placeholder="例如 sekai" autocomplete="username" required>
+                <label for="nickName">昵称</label>
+                <input id="nickName" name="nickName" type="text" placeholder="你的展示昵称">
+                <label for="password">密码</label>
+                <input id="password" name="password" type="password" placeholder="至少 6 位" autocomplete="new-password" required>
+                <label for="confirmPassword">确认密码</label>
+                <input id="confirmPassword" name="confirmPassword" type="password" placeholder="再输入一次密码" autocomplete="new-password" required>
+                <button class="primary-btn" type="submit">注册</button>
+            </form>
+            <a class="secondary-btn" href="/login">返回登录</a>
+        </div>
+    </section>
+</main>
+<script th:src="@{/js/register.js}" src="/js/register.js"></script>
+</body>
+</html>

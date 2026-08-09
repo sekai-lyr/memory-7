@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sekai.picture.mapper.SekaiPictureWallpaperMapper">
+    <resultMap id="BaseResultMap" type="com.sekai.picture.dataobject.SekaiPictureWallpaperDO">
+        <id property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="categoryId" column="category_id"/>
+        <result property="categoryName" column="category_name"/>
+        <result property="title" column="title"/>
+        <result property="characterName" column="character_name"/>
+        <result property="sourceName" column="source_name"/>
+        <result property="tags" column="tags"/>
+        <result property="imageUrl" column="image_url"/>
+        <result property="fileName" column="file_name"/>
+        <result property="fileSize" column="file_size"/>
+        <result property="width" column="width"/>
+        <result property="height" column="height"/>
+        <result property="colorTone" column="color_tone"/>
+        <result property="original" column="is_original"/>
+        <result property="downloadCount" column="download_count"/>
+        <result property="favorite" column="is_favorite"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <sql id="Joined_Column_List">
+        w.id, w.user_id, w.category_id, c.name AS category_name, w.title, w.character_name,
+        w.source_name, w.tags, w.image_url, w.file_name, w.file_size, w.width, w.height,
+        w.color_tone, w.is_original, w.download_count, w.create_time, w.update_time,
+        CASE WHEN f.id IS NULL THEN 0 ELSE 1 END AS is_favorite
+    </sql>
+
+    <insert id="insert" parameterType="com.sekai.picture.dataobject.SekaiPictureWallpaperDO" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO sekai_picture_wallpaper (
+            user_id, category_id, title, character_name, source_name, tags, image_url,
+            file_name, file_size, width, height, color_tone, is_original, download_count
+        ) VALUES (
+            #{userId}, #{categoryId}, #{title}, #{characterName}, #{sourceName}, #{tags}, #{imageUrl},
+            #{fileName}, #{fileSize}, #{width}, #{height}, #{colorTone}, #{original}, #{downloadCount}
+        )
+    </insert>
+
+    <select id="selectByIdAndUserId" resultMap="BaseResultMap">
+        SELECT <include refid="Joined_Column_List"/>
+        FROM sekai_picture_wallpaper w
+        LEFT JOIN sekai_picture_category c ON c.id = w.category_id
+        LEFT JOIN sekai_picture_favorite f ON f.wallpaper_id = w.id AND f.user_id = #{userId}
+        WHERE w.id = #{id} AND w.user_id = #{userId}
+    </select>
+
+    <select id="listByUserId" resultMap="BaseResultMap">
+        SELECT <include refid="Joined_Column_List"/>
+        FROM sekai_picture_wallpaper w
+        LEFT JOIN sekai_picture_category c ON c.id = w.category_id
+        LEFT JOIN sekai_picture_favorite f ON f.wallpaper_id = w.id AND f.user_id = #{userId}
+        <include refid="Search_Filter"/>
+        <choose>
+            <when test="sort == 'popular'">
+                ORDER BY w.download_count DESC, w.id DESC
+            </when>
+            <when test="sort == 'resolution'">
+                ORDER BY (IFNULL(w.width, 0) * IFNULL(w.height, 0)) DESC, w.id DESC
+            </when>
+            <when test="sort == 'title'">
+                ORDER BY w.title ASC, w.id DESC
+            </when>
+            <otherwise>
+                ORDER BY w.id DESC
+            </otherwise>
+        </choose>
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="countByUserId" resultType="int">
+        SELECT COUNT(1)
+        FROM sekai_picture_wallpaper w
+        LEFT JOIN sekai_picture_favorite f ON f.wallpaper_id = w.id AND f.user_id = #{userId}
+        <include refid="Search_Filter"/>
+    </select>
+
+    <sql id="Search_Filter">
+        WHERE w.user_id = #{userId}
+        <if test="categoryId != null">
+            AND w.category_id = #{categoryId}
+        </if>
+        <if test="keyword != null">
+            AND (
+                w.title LIKE CONCAT('%', #{keyword}, '%')
+                OR w.character_name LIKE CONCAT('%', #{keyword}, '%')
+                OR w.source_name LIKE CONCAT('%', #{keyword}, '%')
+                OR w.tags LIKE CONCAT('%', #{keyword}, '%')
+            )
+        </if>
+        <if test="onlyFavorite != null and onlyFavorite">
+            AND f.id IS NOT NULL
+        </if>
+        <include refid="Advanced_Filter"/>
+    </sql>
+
+    <sql id="Advanced_Filter">
+        <if test="original != null">
+            AND w.is_original = #{original}
+        </if>
+        <if test="colorTone != null">
+            AND w.color_tone = #{colorTone}
+        </if>
+        <if test="orientation == 'portrait'">
+            AND w.height IS NOT NULL AND w.width IS NOT NULL AND w.height &gt; w.width
+        </if>
+        <if test="orientation == 'landscape'">
+            AND w.height IS NOT NULL AND w.width IS NOT NULL AND w.width &gt; w.height
+        </if>
+        <if test="orientation == 'square'">
+            AND w.height IS NOT NULL AND w.width IS NOT NULL AND ABS(w.width - w.height) &lt;= 24
+        </if>
+    </sql>
+
+    <select id="listHotByUserId" resultMap="BaseResultMap">
+        SELECT <include refid="Joined_Column_List"/>
+        FROM sekai_picture_wallpaper w
+        LEFT JOIN sekai_picture_category c ON c.id = w.category_id
+        LEFT JOIN sekai_picture_favorite f ON f.wallpaper_id = w.id AND f.user_id = #{userId}
+        WHERE w.user_id = #{userId}
+        ORDER BY w.download_count DESC, w.id DESC
+        LIMIT #{limit}
+    </select>
+
+    <select id="listColorTonesByUserId" resultType="string">
+        SELECT DISTINCT color_tone
+        FROM sekai_picture_wallpaper
+        WHERE user_id = #{userId}
+          AND color_tone IS NOT NULL
+          AND color_tone != ''
+        ORDER BY color_tone ASC
+    </select>
+
+    <select id="randomByUserId" resultMap="BaseResultMap">
+        SELECT <include refid="Joined_Column_List"/>
+        FROM sekai_picture_wallpaper w
+        LEFT JOIN sekai_picture_category c ON c.id = w.category_id
+        LEFT JOIN sekai_picture_favorite f ON f.wallpaper_id = w.id AND f.user_id = #{userId}
+        <include refid="Search_Filter"/>
+        ORDER BY RAND()
+        LIMIT 1
+    </select>
+
+    <update id="updateMeta" parameterType="com.sekai.picture.dataobject.SekaiPictureWallpaperDO">
+        UPDATE sekai_picture_wallpaper
+        SET category_id = #{categoryId},
+            title = #{title},
+            character_name = #{characterName},
+            source_name = #{sourceName},
+            tags = #{tags},
+            color_tone = #{colorTone},
+            is_original = #{original},
+            update_time = NOW()
+        WHERE id = #{id} AND user_id = #{userId}
+    </update>
+
+    <delete id="deleteByIdAndUserId">
+        DELETE FROM sekai_picture_wallpaper
+        WHERE id = #{id} AND user_id = #{userId}
+    </delete>
+
+    <update id="batchMoveCategory">
+        UPDATE sekai_picture_wallpaper
+        SET category_id = #{categoryId}, update_time = NOW()
+        WHERE user_id = #{userId}
+          AND id IN
+          <foreach collection="ids" item="id" open="(" separator="," close=")">
+              #{id}
+          </foreach>
+    </update>
+
+    <select id="countOriginalByUserId" resultType="int">
+        SELECT COUNT(1) FROM sekai_picture_wallpaper WHERE user_id = #{userId} AND is_original = 1
+    </select>
+
+    <select id="sumDownloadCountByUserId" resultType="java.lang.Integer">
+        SELECT COALESCE(SUM(download_count), 0)
+        FROM sekai_picture_wallpaper
+        WHERE user_id = #{userId}
+    </select>
+
+    <update id="increaseDownloadCount">
+        UPDATE sekai_picture_wallpaper
+        SET download_count = download_count + 1
+        WHERE id = #{id} AND user_id = #{userId}
+    </update>
+</mapper>
+

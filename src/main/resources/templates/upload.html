@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sekai Picture - 上传</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}" href="/css/app.css">
+</head>
+<body>
+<header class="topbar">
+    <div>
+        <p class="eyebrow">UPLOAD CENTER</p>
+        <h1>上传和分类管理</h1>
+        <p class="topbar-subtitle">给新壁纸补上标题、角色、作品、标签和色调。</p>
+    </div>
+    <nav>
+        <a href="/home">返回图库</a>
+        <a href="/dashboard">运营看板</a>
+        <a href="/logout">退出</a>
+    </nav>
+</header>
+
+<main class="workspace two-column">
+    <section class="panel">
+        <h2>上传壁纸</h2>
+        <div class="server-message success" th:if="${message}" th:text="${message}"></div>
+        <div class="server-message error" th:if="${error}" th:text="${error}"></div>
+        <form action="/wallpaper/upload" method="post" enctype="multipart/form-data" class="edit-form">
+            <label>图片文件</label>
+            <input type="file" name="file" accept="image/*" required>
+            <label>标题</label>
+            <input type="text" name="title" placeholder="例如：黄昏海岸的约定" required>
+            <label>分类</label>
+            <select name="categoryId">
+                <option value="">未分类</option>
+                <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
+            </select>
+            <label>角色名</label>
+            <input type="text" name="characterName" placeholder="角色或组合名">
+            <label>作品来源</label>
+            <input type="text" name="sourceName" placeholder="番剧 / 游戏 / 原创">
+            <label>标签</label>
+            <input type="text" name="tags" placeholder="海边,夏日,蓝色,清爽">
+            <label>色调</label>
+            <input type="text" name="colorTone" placeholder="blue / pink / dark">
+            <label class="check-pill inline">
+                <input type="checkbox" name="original" value="true">
+                这是自制壁纸
+            </label>
+            <button type="submit">保存壁纸</button>
+        </form>
+    </section>
+
+    <section class="panel upload-helper">
+        <h2>新建分类</h2>
+        <form action="/category/create" method="post" class="edit-form">
+            <label>分类名</label>
+            <input type="text" name="name" placeholder="例如：海边夏日" required>
+            <label>描述</label>
+            <textarea name="description" placeholder="这个分类适合收纳什么类型的壁纸"></textarea>
+            <label>封面地址</label>
+            <input type="url" name="coverUrl" placeholder="可选">
+            <button type="submit">创建分类</button>
+        </form>
+
+        <div class="category-list">
+            <h3>已有分类</h3>
+            <p th:if="${#lists.isEmpty(categories)}">暂无分类</p>
+            <span th:each="category : ${categories}" th:text="${category.name}">分类</span>
+        </div>
+
+        <div class="guide-box">
+            <strong>运营小建议</strong>
+            <p>上传时尽量补齐角色、作品和标签，后续搜索和热门排行都会更好看。</p>
+        </div>
+    </section>
+</main>
+</body>
+</html>

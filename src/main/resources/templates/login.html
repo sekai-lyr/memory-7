@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sekai Picture - 登录</title>
+    <link rel="stylesheet" th:href="@{/css/login.css}" href="/css/login.css">
+</head>
+<body>
+<main class="login-page">
+    <section class="brand-area">
+        <p class="eyebrow">SEKAI PICTURE</p>
+        <h1>把喜欢的二次元壁纸，收进自己的闪光相册。</h1>
+        <p class="brand-copy">分类、上传、搜索、收藏和下载都在这里完成。这个项目可以作为图库系统源码、私有图库、壁纸资源站或接单作品展示。</p>
+    </section>
+    <section class="form-area">
+        <div class="login-card">
+            <h2>欢迎回来</h2>
+            <p>登录你的壁纸图库</p>
+            <div class="server-message success" th:if="${message}" th:text="${message}"></div>
+            <div class="server-message error" th:if="${error}" th:text="${error}"></div>
+            <form action="/user/login" method="post" id="loginForm">
+                <label for="userName">用户名 / 昵称</label>
+                <input id="userName" name="userName" type="text" placeholder="请输入用户名" autocomplete="username" required>
+                <label for="password">密码</label>
+                <div class="password-row">
+                    <input id="password" name="password" type="password" placeholder="请输入密码" autocomplete="current-password" required>
+                    <button type="button" id="togglePassword">显示</button>
+                </div>
+                <button class="primary-btn" type="submit">登录</button>
+            </form>
+            <a class="secondary-btn" href="/register">创建新账号</a>
+        </div>
+    </section>
+</main>
+<script th:src="@{/js/login.js}" src="/js/login.js"></script>
+</body>
+</html>

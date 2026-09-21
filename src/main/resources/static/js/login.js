@@ -6,5 +6,6 @@ if (toggle && password) {
         const visible = password.type === "text";
         password.type = visible ? "password" : "text";
         toggle.textContent = visible ? "显示" : "隐藏";
+        toggle.setAttribute("aria-pressed", String(!visible));
     });
 }

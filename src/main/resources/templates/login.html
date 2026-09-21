@@ -3,36 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sekai Picture - 登录</title>
+    <title>Sekai Picture | 登录</title>
     <link rel="stylesheet" th:href="@{/css/login.css}" href="/css/login.css">
 </head>
-<body>
-<main class="login-page">
-    <section class="brand-area">
-        <p class="eyebrow">SEKAI PICTURE</p>
-        <h1>把喜欢的二次元壁纸，收进自己的闪光相册。</h1>
-        <p class="brand-copy">分类、上传、搜索、收藏和下载都在这里完成。这个项目可以作为图库系统源码、私有图库、壁纸资源站或接单作品展示。</p>
+<body class="auth-page">
+<main class="auth-layout">
+    <section class="auth-art" data-reveal>
+        <img src="/uploads/wallpapers/sekai-import/sekai_import_0005_9f1472cd.jpg" alt="深蓝夜色中的动漫角色壁纸">
+        <div class="auth-art-copy">
+            <span class="auth-mark">SEKAI PICTURE</span>
+            <h1>把喜欢的画面，留在手边。</h1>
+            <p>一个为动漫壁纸准备的私人档案空间。搜索、收藏、分类、上传和下载，都从一张图开始。</p>
+        </div>
     </section>
-    <section class="form-area">
-        <div class="login-card">
+
+    <section class="auth-form-panel" data-reveal>
+        <div class="auth-form-shell">
+            <a class="auth-brand" href="/login">Sekai Picture</a>
             <h2>欢迎回来</h2>
-            <p>登录你的壁纸图库</p>
+            <p class="auth-lead">登录你的壁纸图库，继续整理下一张喜欢的图。</p>
             <div class="server-message success" th:if="${message}" th:text="${message}"></div>
             <div class="server-message error" th:if="${error}" th:text="${error}"></div>
-            <form action="/user/login" method="post" id="loginForm">
+            <form action="/user/login" method="post" id="loginForm" class="auth-form" data-submit-state data-submitting-label="正在登录...">
                 <label for="userName">用户名 / 昵称</label>
                 <input id="userName" name="userName" type="text" placeholder="请输入用户名" autocomplete="username" required>
                 <label for="password">密码</label>
                 <div class="password-row">
                     <input id="password" name="password" type="password" placeholder="请输入密码" autocomplete="current-password" required>
-                    <button type="button" id="togglePassword">显示</button>
+                    <button type="button" id="togglePassword" aria-pressed="false">显示</button>
                 </div>
-                <button class="primary-btn" type="submit">登录</button>
+                <button class="primary-btn" type="submit">登录图库</button>
             </form>
             <a class="secondary-btn" href="/register">创建新账号</a>
+            <p class="auth-footnote">建议使用自制、授权或可商用素材。公开部署前，请确认图片来源和使用范围。</p>
         </div>
     </section>
 </main>
+<script th:src="@{/js/ui.js}" src="/js/ui.js"></script>
 <script th:src="@{/js/login.js}" src="/js/login.js"></script>
 </body>
 </html>

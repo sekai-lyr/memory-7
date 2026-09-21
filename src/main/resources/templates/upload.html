@@ -3,77 +3,123 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sekai Picture - 上传</title>
+    <title>Sekai Picture | 上传壁纸</title>
     <link rel="stylesheet" th:href="@{/css/app.css}" href="/css/app.css">
 </head>
-<body>
-<header class="topbar">
-    <div>
-        <p class="eyebrow">UPLOAD CENTER</p>
-        <h1>上传和分类管理</h1>
-        <p class="topbar-subtitle">给新壁纸补上标题、角色、作品、标签和色调。</p>
+<body class="app-shell upload-page">
+<header class="site-header">
+    <div class="site-header-inner">
+        <a class="brand-lockup" href="/home" aria-label="回到 Sekai Picture 图库">
+            <span class="brand-mark" aria-hidden="true"></span>
+            <span>
+                <strong>Sekai Picture</strong>
+                <small>私人壁纸档案</small>
+            </span>
+        </a>
+        <nav class="site-nav" aria-label="主导航">
+            <span class="user-chip" th:text="${loginUser.nickName != null ? loginUser.nickName : loginUser.userName}">sekai</span>
+            <a href="/home">图库</a>
+            <a href="/dashboard">看板</a>
+            <a class="is-current" href="/upload">上传</a>
+            <a href="/logout">退出</a>
+        </nav>
     </div>
-    <nav>
-        <a href="/home">返回图库</a>
-        <a href="/dashboard">运营看板</a>
-        <a href="/logout">退出</a>
-    </nav>
 </header>
 
-<main class="workspace two-column">
-    <section class="panel">
-        <h2>上传壁纸</h2>
-        <div class="server-message success" th:if="${message}" th:text="${message}"></div>
-        <div class="server-message error" th:if="${error}" th:text="${error}"></div>
-        <form action="/wallpaper/upload" method="post" enctype="multipart/form-data" class="edit-form">
-            <label>图片文件</label>
-            <input type="file" name="file" accept="image/*" required>
-            <label>标题</label>
-            <input type="text" name="title" placeholder="例如：黄昏海岸的约定" required>
-            <label>分类</label>
-            <select name="categoryId">
-                <option value="">未分类</option>
-                <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
-            </select>
-            <label>角色名</label>
-            <input type="text" name="characterName" placeholder="角色或组合名">
-            <label>作品来源</label>
-            <input type="text" name="sourceName" placeholder="番剧 / 游戏 / 原创">
-            <label>标签</label>
-            <input type="text" name="tags" placeholder="海边,夏日,蓝色,清爽">
-            <label>色调</label>
-            <input type="text" name="colorTone" placeholder="blue / pink / dark">
-            <label class="check-pill inline">
-                <input type="checkbox" name="original" value="true">
-                这是自制壁纸
-            </label>
-            <button type="submit">保存壁纸</button>
-        </form>
+<main class="site-main upload-main">
+    <section class="page-intro" data-reveal>
+        <p class="section-kicker">ADD TO THE ARCHIVE</p>
+        <h1>让下一张壁纸有自己的位置。</h1>
+        <p>上传图片，补齐它的来处、角色和色调。之后它会和整座图库一起被搜索、收藏和下载。</p>
     </section>
 
-    <section class="panel upload-helper">
-        <h2>新建分类</h2>
-        <form action="/category/create" method="post" class="edit-form">
-            <label>分类名</label>
-            <input type="text" name="name" placeholder="例如：海边夏日" required>
-            <label>描述</label>
-            <textarea name="description" placeholder="这个分类适合收纳什么类型的壁纸"></textarea>
-            <label>封面地址</label>
-            <input type="url" name="coverUrl" placeholder="可选">
-            <button type="submit">创建分类</button>
-        </form>
+    <section class="upload-layout">
+        <section class="form-panel" data-reveal>
+            <h2>上传壁纸</h2>
+            <p>先放入图片，再给它一个未来能被找回的名字。</p>
+            <div class="server-message success" th:if="${message}" th:text="${message}"></div>
+            <div class="server-message error" th:if="${error}" th:text="${error}"></div>
+            <form action="/wallpaper/upload" method="post" enctype="multipart/form-data" class="edit-form" data-submit-state data-submitting-label="正在保存...">
+                <label class="file-drop" for="wallpaperFile">
+                    <span class="file-drop-copy">选择一张壁纸文件</span>
+                    <strong id="fileName" aria-live="polite">支持 JPG、PNG、WEBP 等图片格式</strong>
+                    <input id="wallpaperFile" type="file" name="file" accept="image/*" required>
+                    <img id="filePreview" src="/uploads/wallpapers/sekai-import/sekai_import_0006_7b138c01.jpg" alt="待上传图片预览" hidden>
+                </label>
 
-        <div class="category-list">
-            <h3>已有分类</h3>
-            <p th:if="${#lists.isEmpty(categories)}">暂无分类</p>
-            <span th:each="category : ${categories}" th:text="${category.name}">分类</span>
-        </div>
+                <div class="field-grid">
+                    <div class="field full-field">
+                        <label for="title">标题</label>
+                        <input id="title" type="text" name="title" placeholder="例如：黄昏海岸的约定" required>
+                    </div>
+                    <div class="field">
+                        <label for="category">分类</label>
+                        <select id="category" name="categoryId">
+                            <option value="">未分类</option>
+                            <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label for="characterName">角色名</label>
+                        <input id="characterName" type="text" name="characterName" placeholder="角色或组合名">
+                    </div>
+                    <div class="field">
+                        <label for="sourceName">作品来源</label>
+                        <input id="sourceName" type="text" name="sourceName" placeholder="番剧 / 游戏 / 原创">
+                    </div>
+                    <div class="field">
+                        <label for="colorTone">色调</label>
+                        <input id="colorTone" type="text" name="colorTone" placeholder="blue / pink / dark">
+                    </div>
+                    <div class="field full-field">
+                        <label for="tags">标签</label>
+                        <input id="tags" type="text" name="tags" placeholder="海边,夏日,蓝色,清爽">
+                    </div>
+                </div>
+                <label class="check-pill">
+                    <input type="checkbox" name="original" value="true">
+                    这是自制壁纸
+                </label>
+                <button type="submit">保存到图库</button>
+            </form>
+        </section>
 
-        <div class="guide-box">
-            <strong>运营小建议</strong>
-            <p>上传时尽量补齐角色、作品和标签，后续搜索和热门排行都会更好看。</p>
+        <div class="upload-side">
+            <figure class="upload-visual" data-reveal>
+                <img src="/uploads/wallpapers/sekai-import/sekai_import_0006_7b138c01.jpg" alt="柔和明亮的动漫壁纸示例" loading="lazy">
+                <figcaption class="visual-caption">
+                    <span>Make room for a new favorite</span>
+                    <strong>每一张图都值得有一个清楚的归档位置。</strong>
+                </figcaption>
+            </figure>
+
+            <aside class="upload-helper" data-reveal>
+                <h2>新建分类</h2>
+                <p>分类是图库里的路径，不需要一次想得很复杂。</p>
+                <form action="/category/create" method="post" class="edit-form" data-submit-state data-submitting-label="正在创建...">
+                    <label for="categoryName">分类名</label>
+                    <input id="categoryName" type="text" name="name" placeholder="例如：海边夏日" required>
+                    <label for="categoryDescription">描述</label>
+                    <textarea id="categoryDescription" name="description" placeholder="这个分类适合收纳什么类型的壁纸"></textarea>
+                    <label for="coverUrl">封面地址</label>
+                    <input id="coverUrl" type="url" name="coverUrl" placeholder="可选">
+                    <button type="submit">创建分类</button>
+                </form>
+
+                <div class="category-list">
+                    <h3>已有分类</h3>
+                    <p th:if="${#lists.isEmpty(categories)}">暂无分类</p>
+                    <span th:each="category : ${categories}" th:text="${category.name}">分类</span>
+                </div>
+
+                <div class="guide-box">
+                    <strong>整理建议</strong>
+                    <p>标题、作品和角色越清楚，下一次想找它时就越快。</p>
+                </div>
+            </aside>
         </div>
     </section>
 </main>
+<script th:src="@{/js/ui.js}" src="/js/ui.js"></script>
 </body>
 </html>

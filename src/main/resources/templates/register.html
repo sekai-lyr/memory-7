@@ -3,36 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sekai Picture - 注册</title>
+    <title>Sekai Picture | 注册</title>
     <link rel="stylesheet" th:href="@{/css/login.css}" href="/css/login.css">
 </head>
-<body>
-<main class="login-page register-page">
-    <section class="brand-area">
-        <p class="eyebrow">CREATE ACCOUNT</p>
-        <h1>给你的壁纸收藏建一个漂亮入口。</h1>
-        <p class="brand-copy">注册后可以上传自制壁纸、建立分类、收藏灵感图，让图库慢慢变成自己的二次元小宇宙。</p>
+<body class="auth-page register-page">
+<main class="auth-layout">
+    <section class="auth-art" data-reveal>
+        <img src="/uploads/wallpapers/sekai-import/sekai_import_0007_337d34a4.jpg" alt="公园长椅上的动漫角色壁纸">
+        <div class="auth-art-copy">
+            <span class="auth-mark">MAKE YOUR ARCHIVE</span>
+            <h1>给收藏一个真正属于你的入口。</h1>
+            <p>创建账号后，你可以上传自制壁纸、建立分类、收藏灵感图，让图库慢慢变成自己的小宇宙。</p>
+        </div>
     </section>
-    <section class="form-area">
-        <div class="login-card">
+
+    <section class="auth-form-panel" data-reveal>
+        <div class="auth-form-shell">
+            <a class="auth-brand" href="/login">Sekai Picture</a>
             <h2>创建账号</h2>
-            <p>开始整理你的图片收藏</p>
+            <p class="auth-lead">从一座干净的私人图库开始。</p>
             <div class="server-message error" th:if="${error}" th:text="${error}"></div>
-            <form action="/user/register" method="post" id="registerForm">
+            <form action="/user/register" method="post" id="registerForm" class="auth-form" data-submit-state data-submitting-label="正在创建...">
                 <label for="userName">用户名</label>
                 <input id="userName" name="userName" type="text" placeholder="例如 sekai" autocomplete="username" required>
                 <label for="nickName">昵称</label>
                 <input id="nickName" name="nickName" type="text" placeholder="你的展示昵称">
                 <label for="password">密码</label>
                 <input id="password" name="password" type="password" placeholder="至少 6 位" autocomplete="new-password" required>
+                <div class="password-meter" id="passwordMeter" aria-live="polite">
+                    <span class="password-meter-track" aria-hidden="true"><span></span></span>
+                    <small id="passwordHint">建议使用 6 位以上并混合字母与数字</small>
+                </div>
                 <label for="confirmPassword">确认密码</label>
                 <input id="confirmPassword" name="confirmPassword" type="password" placeholder="再输入一次密码" autocomplete="new-password" required>
-                <button class="primary-btn" type="submit">注册</button>
+                <button class="primary-btn" type="submit">创建图库账号</button>
             </form>
             <a class="secondary-btn" href="/login">返回登录</a>
+            <p class="auth-footnote">账号只用于保存你的分类、收藏和上传记录。</p>
         </div>
     </section>
 </main>
+<script th:src="@{/js/ui.js}" src="/js/ui.js"></script>
 <script th:src="@{/js/register.js}" src="/js/register.js"></script>
 </body>
 </html>
